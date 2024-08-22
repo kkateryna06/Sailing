@@ -22,6 +22,8 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowDropDown
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.Icon
@@ -34,14 +36,17 @@ import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.window.Dialog
 import com.example.myapplication.ui.theme.MyApplicationTheme
 
 class MainActivity : ComponentActivity() {
@@ -118,6 +123,23 @@ fun CaptainGame() {
         }
     }
 
+    /*POP-UP MESSAGE, HINT*/
+    var showHint by remember { mutableStateOf(true) }
+
+    if (showHint) {
+        Dialog(onDismissRequest = { showHint = false }) {
+            Card(modifier = Modifier.padding(horizontal = 30.dp), colors = CardDefaults
+                .cardColors(containerColor = Color.White.copy(alpha = 0.8f))) {
+                Box(modifier = Modifier.padding(15.dp)) {
+                    Text(
+                        text = "Tap the compass to choose a direction for the ship",
+                        fontSize = 20.sp,
+                        textAlign = TextAlign.Center
+                    )
+                }
+            }
+        }
+    }
 
 
         Column(modifier = Modifier.padding(horizontal = 20.dp, vertical = 30.dp)) {
