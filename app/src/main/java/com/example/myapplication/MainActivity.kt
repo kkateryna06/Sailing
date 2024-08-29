@@ -20,6 +20,8 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowDropDown
+import androidx.compose.material.icons.filled.Refresh
+import androidx.compose.material.icons.materialIcon
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
@@ -79,18 +81,80 @@ fun CaptainGame() {
     val treasuresSet = remember { mutableSetOf(-1, 1) }
     val imageAction = remember { mutableStateOf(R.drawable.ship) }
 
+    fun restartGame() {
+        treasureFound.value = 0
+        shipHealth.value = 10
+        maxShipHealth.value = 10
+        shipLvl.value = 1
+        luckLvl.value = 1
+
+        treasuresSet.clear()
+        treasuresSet.addAll(setOf(-1, 1))
+
+        imageAction.value = R.drawable.ship
+    }
+
+    var showLoose by remember { mutableStateOf(false) }
+    if (showLoose) {
+        Dialog(onDismissRequest = {  }) {
+            Card(modifier = Modifier.padding(horizontal = 30.dp, )) {
+                Column(
+                    modifier = Modifier.padding(15.dp),
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    Image(
+                        modifier = Modifier.size(250.dp),
+                        painter = painterResource(R.drawable.pirates),
+                        contentDescription = ""
+                    )
+                    Text(
+                        text = "Wait... WHAT?! Is that a pirate ship? Oh no, this is a big problem...",
+                        fontSize = 20.sp,
+                        textAlign = TextAlign.Center
+                    )
+                    Text(
+                        text = "Start Again",
+                        fontSize = 15.sp,
+                        modifier = Modifier.padding(top = 15.dp, bottom = 5.dp)
+                    )
+                    Button(
+                        onClick = {
+                            showLoose = false
+                            restartGame()
+                        },
+                        colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme
+                            .colorScheme.error)
+                    ) {
+                        Icon(Icons.Default.Refresh, contentDescription = "")
+                    }
+                }
+            }
+        }
+    }
+
+
+    fun isBroke(playerStat: Int) {
+        if (playerStat <= 0) {
+            showLoose = true
+        }
+    }
+
+    /*GAME LOGIC*/
     fun treasureOrDisaster() {
         val treasure = treasuresSet.random()
         if (treasure != -1) {
             journeyResult.value = "You found a treasure"
             treasureFound.value += treasure
             imageAction.value = R.drawable.treasures
-        } else {
+        }
+        else {
             journeyResult.value = "You get to a storm"
             shipHealth.value -= 1
             imageAction.value = R.drawable.wave
+            isBroke(shipHealth.value)
         }
     }
+    /*GAME LOGIC*/
 
     @Composable
     fun CreateStatsText(statName: MutableState<Int>, statScreenText: String) {
@@ -124,10 +188,10 @@ fun CaptainGame() {
     }
 
     /*POP-UP MESSAGE, HINT*/
-    var showHint by remember { mutableStateOf(true) }
+    val showHint = remember { mutableStateOf(true) }
 
-    if (showHint) {
-        Dialog(onDismissRequest = { showHint = false }) {
+    if (showHint.value) {
+        Dialog(onDismissRequest = { showHint.value = false }) {
             Card(modifier = Modifier.padding(horizontal = 30.dp), colors = CardDefaults
                 .cardColors(containerColor = Color.White.copy(alpha = 0.8f))) {
                 Box(modifier = Modifier.padding(15.dp)) {
@@ -140,6 +204,10 @@ fun CaptainGame() {
             }
         }
     }
+
+
+
+    /*POP-UP MESSAGE, HINT*/
 
 
         Column(modifier = Modifier.padding(horizontal = 20.dp, vertical = 30.dp)) {
