@@ -139,6 +139,43 @@ fun CaptainGame() {
         }
     }
 
+
+    var showNoMoney by remember { mutableStateOf(false) }
+    if (showNoMoney) {
+        Dialog(onDismissRequest = { showNoMoney = false }) {
+            Card(modifier = Modifier.padding(horizontal = 30.dp)) {
+                Column(modifier = Modifier.padding(15.dp), horizontalAlignment = Alignment.CenterHorizontally) {
+                    Box() {
+                        Image(
+                            painter = painterResource(R.drawable.coins),
+                            contentDescription = null,
+                            modifier = Modifier.padding(20.dp)
+                        )
+                    }
+                    Text(
+                        text = "You don't have enough money",
+                        fontSize = 20.sp,
+                        textAlign = TextAlign.Center
+                    )
+                    Button(onClick = { showNoMoney = false }, modifier = Modifier.padding
+                        (top = 10.dp)) {
+                        Text(text = "OK")
+                    }
+                }
+            }
+        }
+    }
+
+    fun isEnoughMoney(currentMoney: Int, price: Int): Boolean {
+        return if (price > currentMoney) {
+            showNoMoney = true
+            false
+        }
+        else {
+            true
+        }
+    }
+
     /*GAME LOGIC*/
     fun treasureOrDisaster() {
         val treasure = treasuresSet.random()
@@ -321,10 +358,17 @@ fun CaptainGame() {
                     Button(
                         modifier = Modifier.size(150.dp, 50.dp),
                         onClick = {
-                            val hp = maxShipHealth.value - shipHealth.value
-                            treasureFound.value -= hp
-                            shipHealth.value += hp
-                            imageAction.value = R.drawable.ship
+                             if (isEnoughMoney(
+                                treasureFound.value,
+                                maxShipHealth.value - shipHealth.value
+                            ) ) {
+                                 val hp = maxShipHealth.value - shipHealth.value
+                                 treasureFound.value -= hp
+                                 shipHealth.value += hp
+                                 imageAction.value = R.drawable.ship
+                             }
+
+
                         }) {
                         Text(text = "REPAIR", fontSize = 20.sp)
                     }
@@ -335,10 +379,13 @@ fun CaptainGame() {
                     horizontalArrangement = Arrangement.SpaceBetween
                 ) {
                     Button(onClick = {
-                        treasureFound.value -= 5
-                        shipLvl.value += 1
-                        maxShipHealth.value += 5
-                        imageAction.value = R.drawable.ship
+                        if (isEnoughMoney(treasureFound.value, 5)) {
+                            treasureFound.value -= 5
+                            shipLvl.value += 1
+                            maxShipHealth.value += 5
+                            imageAction.value = R.drawable.ship
+                        }
+
                     }) {
                         Column(horizontalAlignment = Alignment.CenterHorizontally) {
                             Text(text = "UPGRADE SHIP")
@@ -349,10 +396,12 @@ fun CaptainGame() {
                     Spacer(modifier = Modifier.width(15.dp))
 
                     Button(onClick = {
-                        treasureFound.value -= 5
-                        luckLvl.value += 1
-                        treasuresSet.add(luckLvl.value)
-                        imageAction.value = R.drawable.ship
+                        if (isEnoughMoney(treasureFound.value, 5)) {
+                            treasureFound.value -= 5
+                            luckLvl.value += 1
+                            treasuresSet.add(luckLvl.value)
+                            imageAction.value = R.drawable.ship
+                        }
                     }) {
                         Column(horizontalAlignment = Alignment.CenterHorizontally) {
                             Text(text = "UPGRADE LUCK")
@@ -371,6 +420,6 @@ fun CaptainGame() {
 
 @Preview(showBackground = true)
 @Composable
-fun unitConverterPreview() {
+fun UnitConverterPreview() {
     CaptainGame()
 }
