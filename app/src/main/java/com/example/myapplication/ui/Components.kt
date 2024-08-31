@@ -30,13 +30,16 @@ fun CreateStatsText(statName: MutableState<Int>, statScreenText: String) {
 }
 
 @Composable
-fun CreateButton(compassDirection: String) {
+fun CreateCompassButton(
+    compassDirection: String,
+    direction: MutableState<String>, onAction: () -> Unit
+) {
     Button(
         modifier = Modifier
             .size(70.dp, 70.dp),
         onClick = {
             direction.value = compassDirection
-            treasureOrDisaster()
+            onAction()
         },
         colors = ButtonDefaults.buttonColors(
             containerColor = Color.Transparent,

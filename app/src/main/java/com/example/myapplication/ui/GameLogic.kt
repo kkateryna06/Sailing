@@ -1,5 +1,6 @@
 package com.example.myapplication
 
+import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 
 
@@ -25,16 +26,17 @@ fun restartGame(
 }
 
 
-fun isBroke(playerStat: Int) {
+fun isBroke(playerStat: Int, onLose: () -> Unit) {
     if (playerStat <= 0) {
-        showLoose = true
+        onLose()
     }
 }
 
 
+@Composable
 fun isEnoughMoney(currentMoney: Int, price: Int): Boolean {
     return if (price > currentMoney) {
-        showNoMoney = true
+        ShowNoMoneyDialog(false)
         false
     }
     else {
@@ -43,7 +45,13 @@ fun isEnoughMoney(currentMoney: Int, price: Int): Boolean {
 }
 
 
-fun treasureOrDisaster() {
+fun treasureOrDisaster(
+    treasuresSet: MutableSet<Int>,
+    journeyResult: MutableState<String>,
+    treasureFound: MutableState<Int>,
+    imageAction: MutableState<Int>,
+    shipHealth: MutableState<Int>
+) {
     val treasure = treasuresSet.random()
     if (treasure != -1) {
         journeyResult.value = "You found a treasure"

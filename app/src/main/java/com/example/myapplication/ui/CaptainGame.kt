@@ -24,10 +24,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.example.myapplication.CreateButton
+import com.example.myapplication.CreateCompassButton
 import com.example.myapplication.CreateStatsText
 import com.example.myapplication.R
 import com.example.myapplication.isEnoughMoney
+import com.example.myapplication.treasureOrDisaster
 
 
 @Composable
@@ -43,7 +44,9 @@ fun CaptainGame() {
     val treasuresSet = remember { mutableSetOf(-1, 1) }
     val imageAction = remember { mutableStateOf(R.drawable.ship) }
 
-    var showLoose by remember { mutableStateOf(false) }
+    var showLose by remember { mutableStateOf(false) }
+    var onLose = { showLose = true }
+
     var showNoMoney by remember { mutableStateOf(false) }
     val showHint = remember { mutableStateOf(true) }
 
@@ -113,15 +116,47 @@ fun CaptainGame() {
                     horizontalAlignment = Alignment.CenterHorizontally,
                     verticalArrangement = Arrangement.SpaceBetween
                 ) {
-                    CreateButton(compassDirection = "North")
+                    CreateCompassButton(compassDirection = "North", direction) {
+                        treasureOrDisaster(
+                            treasuresSet,
+                            journeyResult,
+                            treasureFound,
+                            imageAction,
+                            shipHealth
+                        )
+                    }
                     Row(
                         horizontalArrangement = Arrangement.SpaceBetween,
                         modifier = Modifier.fillMaxWidth()
                     ) {
-                        CreateButton(compassDirection = "West")
-                        CreateButton(compassDirection = "East")
+                        CreateCompassButton(compassDirection = "West", direction) {
+                            treasureOrDisaster(
+                                treasuresSet,
+                                journeyResult,
+                                treasureFound,
+                                imageAction,
+                                shipHealth
+                            )
+                        }
+                        CreateCompassButton(compassDirection = "East", direction) {
+                            treasureOrDisaster(
+                                treasuresSet,
+                                journeyResult,
+                                treasureFound,
+                                imageAction,
+                                shipHealth
+                            )
+                        }
                     }
-                    CreateButton(compassDirection = "South")
+                    CreateCompassButton(compassDirection = "South", direction) {
+                        treasureOrDisaster(
+                            treasuresSet,
+                            journeyResult,
+                            treasureFound,
+                            imageAction,
+                            shipHealth
+                        )
+                    }
                 }
             }
 
@@ -131,10 +166,7 @@ fun CaptainGame() {
                 Button(
                     modifier = Modifier.size(150.dp, 50.dp),
                     onClick = {
-                        if (isEnoughMoney(
-                                treasureFound.value,
-                                maxShipHealth.value - shipHealth.value
-                            ) ) {
+                        if (treasureFound.value >= (maxShipHealth.value - shipHealth.value))  {
                             val hp = maxShipHealth.value - shipHealth.value
                             treasureFound.value -= hp
                             shipHealth.value += hp
@@ -152,7 +184,7 @@ fun CaptainGame() {
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
                 Button(onClick = {
-                    if (isEnoughMoney(treasureFound.value, 5)) {
+                    if (treasureFound.value >= 5) {
                         treasureFound.value -= 5
                         shipLvl.value += 1
                         maxShipHealth.value += 5
@@ -169,7 +201,7 @@ fun CaptainGame() {
                 Spacer(modifier = Modifier.width(15.dp))
 
                 Button(onClick = {
-                    if (isEnoughMoney(treasureFound.value, 5)) {
+                    if (treasureFound.value >= 5) {
                         treasureFound.value -= 5
                         luckLvl.value += 1
                         treasuresSet.add(luckLvl.value)

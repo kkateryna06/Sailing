@@ -30,8 +30,8 @@ import androidx.compose.ui.window.Dialog
 
 
 @Composable
-fun ShowLooseDialog() {
-    if (showLoose) {
+fun ShowLoseDialog() {
+    if (showLose) {
         Dialog(onDismissRequest = {  }) {
             Card(modifier = Modifier.padding(horizontal = 30.dp, )) {
                 Column(
@@ -55,7 +55,7 @@ fun ShowLooseDialog() {
                     )
                     Button(
                         onClick = {
-                            showLoose = false
+                            showLose = false
                             restartGame()
                         },
                         colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme
@@ -72,9 +72,10 @@ fun ShowLooseDialog() {
 
 
 @Composable
-fun ShowNoMoneyDialog() {
-    if (showNoMoney) {
-        Dialog(onDismissRequest = { showNoMoney = false }) {
+fun ShowNoMoneyDialog(showNoMoney: Boolean) {
+    var showDialog = showNoMoney
+    if (showDialog) {
+        Dialog(onDismissRequest = { showDialog = false }) {
             Card(modifier = Modifier.padding(horizontal = 30.dp)) {
                 Column(modifier = Modifier.padding(15.dp), horizontalAlignment = Alignment.CenterHorizontally) {
                     Box() {
@@ -89,7 +90,7 @@ fun ShowNoMoneyDialog() {
                         fontSize = 20.sp,
                         textAlign = TextAlign.Center
                     )
-                    Button(onClick = { showNoMoney = false }, modifier = Modifier.padding
+                    Button(onClick = { showDialog = false }, modifier = Modifier.padding
                         (top = 10.dp)) {
                         Text(text = "OK")
                     }
