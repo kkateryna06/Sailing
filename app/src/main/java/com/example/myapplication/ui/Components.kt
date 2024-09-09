@@ -32,7 +32,8 @@ fun CreateStatsText(statName: MutableState<Int>, statScreenText: String) {
 @Composable
 fun CreateCompassButton(
     compassDirection: String,
-    direction: MutableState<String>, onAction: () -> Unit
+    direction: MutableState<String>,
+    onAction: () -> Unit
 ) {
     Button(
         modifier = Modifier

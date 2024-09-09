@@ -15,10 +15,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
+import androidx.compose.runtime.MutableState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -29,40 +26,56 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 
 
+
 @Composable
-fun ShowLoseDialog() {
-    if (showLose) {
-        Dialog(onDismissRequest = {  }) {
-            Card(modifier = Modifier.padding(horizontal = 30.dp, )) {
-                Column(
-                    modifier = Modifier.padding(15.dp),
-                    horizontalAlignment = Alignment.CenterHorizontally
+fun ShowLoseDialog(
+    showLose: MutableState<Boolean>,
+    treasureFound: MutableState<Int>,
+    shipHealth: MutableState<Int>,
+    maxShipHealth: MutableState<Int>,
+    shipLvl: MutableState<Int>,
+    luckLvl: MutableState<Int>,
+    treasuresSet: MutableSet<Int>,
+    imageAction: MutableState<Int>
+) {
+    Dialog(onDismissRequest = {  }) {
+        Card(modifier = Modifier.padding(horizontal = 30.dp, )) {
+            Column(
+                modifier = Modifier.padding(15.dp),
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                Image(
+                    modifier = Modifier.size(250.dp),
+                    painter = painterResource(R.drawable.pirates),
+                    contentDescription = ""
+                )
+                Text(
+                    text = "Wait... WHAT?! Is that a pirate ship? Oh no, this is a big problem...",
+                    fontSize = 20.sp,
+                    textAlign = TextAlign.Center
+                )
+                Text(
+                    text = "Start Again",
+                    fontSize = 15.sp,
+                    modifier = Modifier.padding(top = 15.dp, bottom = 5.dp)
+                )
+                Button(
+                    onClick = {
+                        showLose.value = false
+                        restartGame(
+                            treasureFound,
+                            shipHealth,
+                            maxShipHealth,
+                            shipLvl,
+                            luckLvl,
+                            treasuresSet,
+                            imageAction
+                        )
+                    },
+                    colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme
+                        .colorScheme.error)
                 ) {
-                    Image(
-                        modifier = Modifier.size(250.dp),
-                        painter = painterResource(R.drawable.pirates),
-                        contentDescription = ""
-                    )
-                    Text(
-                        text = "Wait... WHAT?! Is that a pirate ship? Oh no, this is a big problem...",
-                        fontSize = 20.sp,
-                        textAlign = TextAlign.Center
-                    )
-                    Text(
-                        text = "Start Again",
-                        fontSize = 15.sp,
-                        modifier = Modifier.padding(top = 15.dp, bottom = 5.dp)
-                    )
-                    Button(
-                        onClick = {
-                            showLose = false
-                            restartGame()
-                        },
-                        colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme
-                            .colorScheme.error)
-                    ) {
-                        Icon(Icons.Default.Refresh, contentDescription = "")
-                    }
+                    Icon(Icons.Default.Refresh, contentDescription = "")
                 }
             }
         }
@@ -103,7 +116,7 @@ fun ShowNoMoneyDialog(showNoMoney: Boolean) {
 
 
 @Composable
-fun ShowHintDialog() {
+fun ShowHintDialog(showHint: MutableState<Boolean>) {
     if (showHint.value) {
         Dialog(onDismissRequest = { showHint.value = false }) {
             Card(modifier = Modifier.padding(horizontal = 30.dp), colors = CardDefaults

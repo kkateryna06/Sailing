@@ -26,9 +26,29 @@ fun restartGame(
 }
 
 
-fun isBroke(playerStat: Int, onLose: () -> Unit) {
+@Composable
+fun isLose(
+    playerStat: Int,
+    showLose: MutableState<Boolean>,
+    treasureFound: MutableState<Int>,
+    shipHealth: MutableState<Int>,
+    maxShipHealth: MutableState<Int>,
+    shipLvl: MutableState<Int>,
+    luckLvl: MutableState<Int>,
+    treasuresSet: MutableSet<Int>,
+    imageAction: MutableState<Int>
+) {
     if (playerStat <= 0) {
-        onLose()
+        ShowLoseDialog(
+            treasuresSet = treasuresSet,
+            imageAction = imageAction,
+            luckLvl = luckLvl,
+            maxShipHealth = maxShipHealth,
+            shipHealth = shipHealth,
+            shipLvl = shipLvl,
+            showLose = showLose,
+            treasureFound = treasureFound
+        )
     }
 }
 
@@ -45,12 +65,17 @@ fun isEnoughMoney(currentMoney: Int, price: Int): Boolean {
 }
 
 
+@Composable
 fun treasureOrDisaster(
     treasuresSet: MutableSet<Int>,
     journeyResult: MutableState<String>,
     treasureFound: MutableState<Int>,
     imageAction: MutableState<Int>,
-    shipHealth: MutableState<Int>
+    shipHealth: MutableState<Int>,
+    showLose: MutableState<Boolean>,
+    maxShipHealth: MutableState<Int>,
+    shipLvl: MutableState<Int>,
+    luckLvl: MutableState<Int>,
 ) {
     val treasure = treasuresSet.random()
     if (treasure != -1) {
@@ -62,6 +87,16 @@ fun treasureOrDisaster(
         journeyResult.value = "You get to a storm"
         shipHealth.value -= 1
         imageAction.value = R.drawable.wave
-        isBroke(shipHealth.value)
+        isLose(
+            shipHealth.value,
+            showLose,
+            treasureFound,
+            shipHealth,
+            maxShipHealth,
+            shipLvl,
+            luckLvl,
+            treasuresSet,
+            imageAction
+        )
     }
 }

@@ -27,7 +27,6 @@ import androidx.compose.ui.unit.sp
 import com.example.myapplication.CreateCompassButton
 import com.example.myapplication.CreateStatsText
 import com.example.myapplication.R
-import com.example.myapplication.isEnoughMoney
 import com.example.myapplication.treasureOrDisaster
 
 
@@ -44,12 +43,27 @@ fun CaptainGame() {
     val treasuresSet = remember { mutableSetOf(-1, 1) }
     val imageAction = remember { mutableStateOf(R.drawable.ship) }
 
-    var showLose by remember { mutableStateOf(false) }
-    var onLose = { showLose = true }
+    val showLose = remember { mutableStateOf(false) }
+    var onLose = { showLose.value = true }
 
     var showNoMoney by remember { mutableStateOf(false) }
     val showHint = remember { mutableStateOf(true) }
+    var shouldTriggerTreasure = remember { mutableStateOf(false) }
 
+    if (shouldTriggerTreasure.value) {
+        treasureOrDisaster(
+            treasuresSet = treasuresSet,
+            imageAction = imageAction,
+            journeyResult = journeyResult,
+            luckLvl = luckLvl,
+            maxShipHealth = maxShipHealth,
+            shipHealth = shipHealth,
+            shipLvl = shipLvl,
+            showLose = showLose,
+            treasureFound = treasureFound
+        )
+        shouldTriggerTreasure.value = false
+    }
 
     Column(modifier = Modifier.padding(horizontal = 20.dp, vertical = 30.dp)) {
 
@@ -117,45 +131,21 @@ fun CaptainGame() {
                     verticalArrangement = Arrangement.SpaceBetween
                 ) {
                     CreateCompassButton(compassDirection = "North", direction) {
-                        treasureOrDisaster(
-                            treasuresSet,
-                            journeyResult,
-                            treasureFound,
-                            imageAction,
-                            shipHealth
-                        )
+
                     }
                     Row(
                         horizontalArrangement = Arrangement.SpaceBetween,
                         modifier = Modifier.fillMaxWidth()
                     ) {
                         CreateCompassButton(compassDirection = "West", direction) {
-                            treasureOrDisaster(
-                                treasuresSet,
-                                journeyResult,
-                                treasureFound,
-                                imageAction,
-                                shipHealth
-                            )
+                            shouldTriggerTreasure.value = true
                         }
                         CreateCompassButton(compassDirection = "East", direction) {
-                            treasureOrDisaster(
-                                treasuresSet,
-                                journeyResult,
-                                treasureFound,
-                                imageAction,
-                                shipHealth
-                            )
+                            shouldTriggerTreasure.value = true
                         }
                     }
                     CreateCompassButton(compassDirection = "South", direction) {
-                        treasureOrDisaster(
-                            treasuresSet,
-                            journeyResult,
-                            treasureFound,
-                            imageAction,
-                            shipHealth
-                        )
+                        shouldTriggerTreasure.value = true
                     }
                 }
             }
